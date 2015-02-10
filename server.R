@@ -41,12 +41,11 @@ server <- function(input, output) {
   output$hbase <- renderDygraph({
     start <- Sys.time()
     if(is.null(hbase_data)) return(NULL)
-      d <- dygraph(hbase_data(), main = "HBase") %>% 
+      dygraph(hbase_data(), main = paste("HBase Total Time:",round((Sys.time() - start)*100,2),"(ms)")) %>% 
         dySeries(name = input$variables[1],axis = 'y') %>%
         dySeries(name = input$variables[length(input$variables)],axis = 'y2') %>%
-        dyRangeSelector()
-      output$hbase_timer <- renderText(paste("HBase Total Time (ms): ",round((Sys.time() - start)*100,2)))
-      d
+        dyRangeSelector() %>%
+        dyOptions(stepPlot = TRUE)
   })
   
 }

@@ -13,7 +13,6 @@ header <- dashboardHeader(
 
 body <- dashboardBody(
   fluidRow(
-    textOutput("hbase_timer"),
     box(dygraphOutput("hbase"),width = 800)
   )
 )
