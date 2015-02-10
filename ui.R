@@ -13,6 +13,7 @@ header <- dashboardHeader(
 
 body <- dashboardBody(
   fluidRow(
+    textOutput("hbase_timer"),
     box(dygraphOutput("hbase"),width = 800)
   )
 )
@@ -22,7 +23,7 @@ sidebar <- dashboardSidebar(
     menuItem("rHBase", tabName = "rhbase", icon = icon("th"))
   ),
   selectInput("airports","Airports:", c("LAX","SFO","JFK")),
-  selectizeInput("variables","Variables:",c("gear","rpm","speed"),multiple = T, select = "gear")
+  selectizeInput("variables","Variables:",c("gear","rpm","speed"),multiple = T, select = c("rpm","speed"))
 )
 
 ui <- dashboardPage(
