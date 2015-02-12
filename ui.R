@@ -12,8 +12,16 @@ header <- dashboardHeader(
 )
 
 body <- dashboardBody(
-  fluidRow(
-    box(dygraphOutput("hbase"),width = 800)
+  
+  tabItems(
+    tabItem(tabName = "speed_test",
+      fluidRow(
+        box(dygraphOutput("hbase"),width = 800)
+      )
+    ),
+    tabItem(tabName = "rhbase",
+      includeMarkdown("rhbase_document.Rmd")
+    )
   )
 )
 sidebar <- dashboardSidebar(
