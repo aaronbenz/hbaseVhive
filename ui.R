@@ -14,12 +14,15 @@ header <- dashboardHeader(
 body <- dashboardBody(
   
   tabItems(
-    tabItem(tabName = "speed_test",
+    tabItem(tabName = "HBase vs HDFS",
       fluidRow(
-        box(dygraphOutput("hbase"),width = 600), box(dygraphOutput("hdfs"), width = 600))
+        box(dygraphOutput("hbase"),width = 600),
+        box(dygraphOutput("hdfs"), width = 600))
     ),
-    tabItem(tabName = "rhbase",
-      includeMarkdown("rhbase_document.Rmd")
+    tabItem(tabName = "rHBase Formatting",
+      fluidRow(
+        box(verbatimTextOutput("hbase_original"),title = "rhbase original"),
+        box(verbatimTextOutput("hbase_tidyr"), title = "rhbase tidyr version"))
     )
   )
 )

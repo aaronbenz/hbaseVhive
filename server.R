@@ -88,4 +88,25 @@ server <- function(input, output) {
       setnames(data,"date_time","timeDate")
       xts(data[,2:length(data),with=F],data[[1]])
   }
+  
+  #-------------------------------------------------------------------------
+  colspecs <- reactive(paste("test", input$variables, sep = "::"))
+  hbase_scan_output <- reactive(hb.scan(tablename = "Test", startrow = input$airports,end = paste0(input$airport,"z"),colspec =colspecs())$get())
+  
+  output$hbase_original <- renderPrint({
+    x <- hbase_scan_output()
+    lapply(x, function(i){
+      i[[3]] <- lapply(i[[3]],function(x){
+        lapply(x, function(x) data.table(list(setDT(x))))})
+      i
+    })[1:2]
+  })
+  
+  new_scan_output <- reactive(hb.pull(tablename = "Test",column_family = "test", start = input$airports, end = paste0(input$airport,"z"),columns = input$variables))
+  output$hbase_tidyr <- renderPrint({
+    a <- new_scan_output()
+    setnames(a, "column_family", "c.family")
+    a
+  })
+
 }
