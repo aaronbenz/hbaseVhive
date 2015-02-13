@@ -12,6 +12,8 @@ library(xts)
 library(timeseriesr)
 Sys.setenv("HADOOP_CMD"="/home/aaron/myProgs/hadoop-2.6.0/bin/hadoop")
 library(rhdfs)
+load("hbaseVhdfs.Rda")
+
 server <- function(input, output) { 
   hb.init()
   hdfs.init()
@@ -108,5 +110,12 @@ server <- function(input, output) {
     setnames(a, "column_family", "c.family")
     a
   })
+  
+  #----------------------------------------------------
+  bind_shiny(plot_id = "compare_HBase_HDFS",
+    hbaseVhdfs %>% ggvis(~expr, ~time/1e6) %>% 
+      layer_boxplots() %>%
+      add_axis("y",title="time (ms)") %>%
+      add_axis("x",title = ""))
 
 }
