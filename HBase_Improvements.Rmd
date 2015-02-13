@@ -1,0 +1,72 @@
+---
+title: "HBase Improvements"
+author: "Aaron Benz"
+date: "02/13/2015"
+output: html_document
+runtime: shiny
+---
+
+## Improvements on Retrieving Data
+```{r, echo=FALSE}
+library(rhbase)
+library(magrittr)
+library(data.table)
+connect <- hb.init()
+inputPanel(
+  selectInput("airport", label = "Airport:",
+              choices = c("LAX","JFK")),
+  
+  selectInput("variables", label = "variables:",choices = c("gear","rpm","speed"), multiple = T, selected = "gear")
+  
+)
+colspecs <- reactive(paste("test", input$variables, sep = "::"))
+hbase_scan_output <- reactive(hb.scan(tablename = "Test", startrow = input$airport,end = paste0(input$airport,"z"),colspec =colspecs())$get())
+
+# hb.scan("Test","LAX","LAXz","test::rpm")$get()[[1]]
+```
+
+###Original rHBase Format
+
+```{r, echo = F}
+renderPrint({
+  x <- hbase_scan_output()
+  lapply(x, function(i){
+    i[[3]] <- lapply(i[[3]],function(x){
+          lapply(x, function(x) data.table(list(setDT(x))))})
+    i
+  })[1:2]
+  })
+```
+
+###New Tidyr Format
+
+```{r,echo=F}
+new_scan_output <- reactive(hb.pull(tablename = "Test",column_family = "test", start = input$airport, end = paste0(input$airport,"z"),columns = input$variables))
+renderPrint({
+  new_scan_output()
+})
+
+```
+
+
+
+## Embedded Application
+
+It's also possible to embed an entire Shiny application within an R Markdown document using the `shinyAppDir` function. This example embeds a Shiny application located in another directory:
+
+```{r, echo=FALSE}
+# shinyAppDir(".",
+#   options=list(
+#     width="100%", height=550
+#   )
+# )
+```
+
+Note the use of the `height` parameter to determine how much vertical space the embedded application should occupy.
+
+You can also use the `shinyApp` function to define an application inline rather then in an external directory.
+
+In all of R code chunks above the `echo = FALSE` attribute is used. This is to prevent the R code within the chunk from rendering in the document alongside the Shiny components.
+
+
+
