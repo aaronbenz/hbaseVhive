@@ -10,6 +10,8 @@ library(rhbase)
 library(data.table)
 library(xts)
 library(timeseriesr)
+library(ggvis)
+library(ggplot2)
 Sys.setenv("HADOOP_CMD"="/home/aaron/myProgs/hadoop-2.6.0/bin/hadoop")
 library(rhdfs)
 load("hbaseVhdfs.Rda")
@@ -117,5 +119,20 @@ server <- function(input, output) {
       layer_boxplots() %>%
       add_axis("y",title="time (ms)") %>%
       add_axis("x",title = ""))
+  
+#-----------------------------------------------------------------
+#timeseries r reduce
+  dt <- reactive({
+    dt <- data.table("index" = 1:input$size, "sin" = sin(seq(0,20,10/input$size*2))[-1])
+    dt[vreduce(dt$sin,input$tol)]
+  })
+  output$reduced_points <- renderText(paste(nrow(dt())))
+  output$ggplot_reduced <- renderPlot({
+    g <- ggplot(dt(), aes(index, sin)) + geom_step()+
+      labs(title = paste("Number of Points: ", input$size, "\n Tolerance %: ", input$tol))+
+      theme(panel.grid.major = element_blank(), panel.grid.minor = element_blank(), 
+          panel.background = element_blank(), axis.line = element_line(colour = "black"))
+    print(g)
+  })
 
 }
