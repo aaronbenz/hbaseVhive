@@ -83,12 +83,9 @@ server <- function(input, output) {
         out
       }
       data <- data[,list("rbinded" = list(merge_em(values))),by=c("vin","day","airport")] #data.table functionality
-      #     data$rbinded <- data$rbinded %>% lapply(dtreplace)  %>% lapply(setDT)#fills in missing NAs
       if(length(input$variables)==1) data$rbinded[[1]] <-  data$rbinded[[1]]
-      data  <- (data$rbinded[[1]])
-      #     data <- data[!duplicated(data$date_time)]
+      data  <- data$rbinded[[1]]
       data$date_time <- as.POSIXct.numeric(data$date_time,origin = "1970-01-01")
-      #     data$timeDate  <- as.POSIXlt(data$timeDate, origin = "1970-01-01")
       setnames(data,"date_time","timeDate")
       xts(data[,2:length(data),with=F],data[[1]])
   }

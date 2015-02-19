@@ -17,8 +17,9 @@ body <- dashboardBody(
   tabItems(
     tabItem(tabName = "speed_test",
       fluidRow(
-        box(dygraphOutput("hbase"),width = 6),
-        box(dygraphOutput("hdfs"), width = 6))
+        box(dygraphOutput("hbase"),width = 12),
+        box(dygraphOutput("hdfs"), width = 12)),
+        box(width = 12,includeCSS("simple_dygraphs.html"))
     ),
     tabItem(tabName = "rhbase",
       fluidRow(
